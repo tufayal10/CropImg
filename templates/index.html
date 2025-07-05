@@ -5,249 +5,102 @@
     <title>Image Cropping Tool</title>
     <style>
         body {
-            background: radial-gradient(circle at top, #0f2027, #203a43, #2c5364);
-            font-family: 'Poppins', sans-serif;
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #1f1f1f, #2e2e2e);
+            color: #f5f5f5;
             display: flex;
             flex-direction: column;
             align-items: center;
-            padding: 30px 20px;
-            color: #fff;
+            padding: 40px;
         }
 
         h1 {
-            color: #f5c518;
-            font-size: 28px;
+            color: #00ffcc;
             margin-bottom: 20px;
         }
 
         form {
-            background-color: #181a1b;
-            padding: 30px 20px;
-            border-radius: 16px;
+            background-color: #333;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.5);
             width: 100%;
-            max-width: 480px;
-            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
-        }
-
-        input[type="file"] {
-            width: 100%;
-            padding: 12px;
-            border: none;
-            border-radius: 8px;
-            background: #2a2c2d;
-            color: #fff;
-            margin-bottom: 16px;
+            max-width: 600px;
         }
 
         .input-row {
             display: flex;
             gap: 10px;
-            flex-wrap: wrap;
-            margin-bottom: 16px;
+            margin-bottom: 15px;
         }
 
-        .input-row input[type="number"] {
-            flex: 1;
-            min-width: 60px;
-            padding: 10px;
+        input[type="number"], input[type="file"] {
+            padding: 8px;
+            width: 100%;
+            border-radius: 6px;
             border: none;
-            border-radius: 8px;
-            background: #2a2c2d;
-            color: #fff;
-            font-size: 14px;
+            background-color: #444;
+            color: #f5f5f5;
         }
 
         button {
-            background-color: #ff7e67;
-            color: white;
+            background-color: #00ffcc;
+            color: #000;
+            padding: 10px 15px;
             border: none;
-            padding: 12px;
             border-radius: 8px;
-            font-size: 16px;
             cursor: pointer;
+            font-weight: bold;
             width: 100%;
             margin-top: 10px;
         }
 
         button:hover {
-            background-color: #ff9a80;
+            background-color: #00e6b8;
         }
 
-        .preview-section {
-            display: none;
+        .footer {
+            margin-top: 30px;
             text-align: center;
-            margin-top: 20px;
         }
 
-        .preview-section img {
-            width: 100%;
-            max-width: 300px;
-            border-radius: 12px;
-            margin-bottom: 10px;
-        }
-
-        .button-row {
-            display: flex;
-            gap: 10px;
-            margin-top: 15px;
-            width: 100%;
-        }
-
-        /* Modal Style */
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 999;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.8);
-            justify-content: center;
-            align-items: center;
-        }
-
-        .modal-content {
-            background: #1e1e1e;
-            padding: 20px;
-            border-radius: 12px;
-            text-align: left;
-            max-width: 400px;
-            color: #fff;
-        }
-
-        .modal-content h2 {
-            margin-top: 0;
-            color: #f5c518;
-        }
-
-        .close-btn {
-            background-color: #ff7e67;
-            padding: 8px 12px;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            margin-top: 15px;
-        }
-
-        .close-btn:hover {
-            background-color: #ff9a80;
-        }
-
-        .modal-content button {
-            margin-top: 10px;
-            background-color: #34495e;
-            border: none;
-            border-radius: 8px;
-            padding: 10px;
-            width: 100%;
-            color: #fff;
-            cursor: pointer;
-            font-size: 15px;
-        }
-
-        .modal-content button:hover {
-            background-color: #2c3e50;
+        .footer button {
+            width: auto;
+            margin: 5px;
         }
     </style>
 </head>
 <body>
     <h1>Image Cropping Tool</h1>
-    <form id="cropForm" method="POST" action="/crop" enctype="multipart/form-data">
-        <input type="file" name="images" id="imageInput" accept="image/*" multiple required>
+    <form action="/crop" method="post" enctype="multipart/form-data">
         <div class="input-row">
-            <input type="number" name="x" id="x" placeholder="X" value="320" required>
-            <input type="number" name="y" id="y" placeholder="Y" value="0" required>
-            <input type="number" name="width" id="width" placeholder="Width" value="640" required>
-            <input type="number" name="height" id="height" placeholder="Height" value="752" required>
+            <input type="number" name="x" value="320" placeholder="X">
+            <input type="number" name="y" value="0" placeholder="Y">
+            <input type="number" name="width" value="640" placeholder="Width">
+            <input type="number" name="height" value="752" placeholder="Height">
         </div>
-        <button type="button" onclick="showPreview()">Preview Crop</button>
-
-        <div class="preview-section" id="previewSection">
-            <h2>Preview (First Image)</h2>
-            <img id="croppedPreview" alt="Preview">
-            <button type="submit">Crop & Download ZIP</button>
-        </div>
+        <input type="file" name="images" accept="image/*" multiple required>
+        <button type="submit">Crop & Download</button>
     </form>
 
-    <div class="button-row">
-        <button onclick="openUserManual()">User Manual</button>
-        <button onclick="openDeveloperInfo()">Developer Info</button>
-    </div>
-
-    <!-- User Manual Modal -->
-    <div class="modal" id="userManualModal">
-        <div class="modal-content">
-            <h2>User Manual</h2>
-            <p><strong>1. Upload Images:</strong> Select up to 100 images.</p>
-            <p><strong>2. Set Crop Area:</strong> Adjust X, Y, Width, Height as needed.</p>
-            <p><strong>3. Preview:</strong> Click Preview Crop to see the result.</p>
-            <p><strong>4. Crop & Download:</strong> Click Crop & Download ZIP to get your cropped images.</p>
-            <button class="close-btn" onclick="closeUserManual()">Close</button>
-        </div>
-    </div>
-
-    <!-- Developer Info Modal -->
-    <div class="modal" id="developerModal">
-        <div class="modal-content">
-            <h2>Developer Info</h2>
-            <p>Developer: <strong>S M Tufayal Ahammad</strong></p>
-            <button onclick="window.open('https://profile.tufayal.com', '_blank')">Portfolio</button>
-            <button onclick="window.open('https://projects.tufayal.com', '_blank')">Other Projects</button>
-            <button onclick="window.open('https://suggestion.tufayal.com', '_blank')">Suggest Edit</button>
-            <button class="close-btn" onclick="closeDeveloperInfo()">Close</button>
-        </div>
+    <div class="footer">
+        <button onclick="showUserManual()">User Manual</button>
+        <button onclick="showDeveloperInfo()">Developer Info</button>
     </div>
 
     <script>
-        function showPreview() {
-            const fileInput = document.getElementById('imageInput');
-            const x = parseInt(document.getElementById('x').value);
-            const y = parseInt(document.getElementById('y').value);
-            const width = parseInt(document.getElementById('width').value);
-            const height = parseInt(document.getElementById('height').value);
-
-            if (fileInput.files.length === 0) {
-                alert("Please select at least one image.");
-                return;
-            }
-
-            if (fileInput.files.length > 100) {
-                alert("You can only upload up to 100 images at once.");
-                return;
-            }
-
-            const reader = new FileReader();
-            reader.onload = function (e) {
-                const img = new Image();
-                img.onload = function () {
-                    const canvas = document.createElement('canvas');
-                    canvas.width = width;
-                    canvas.height = height;
-                    const ctx = canvas.getContext('2d');
-                    ctx.drawImage(img, x, y, width, height, 0, 0, width, height);
-                    document.getElementById('croppedPreview').src = canvas.toDataURL('image/png');
-                    document.getElementById('previewSection').style.display = 'block';
-                };
-                img.src = e.target.result;
-            };
-            reader.readAsDataURL(fileInput.files[0]);
+        function showUserManual() {
+            alert("1. Upload images (up to 100).\n"
+                + "2. Enter X, Y, Width, Height for cropping.\n"
+                + "3. Click 'Crop & Download' to download the cropped images as ZIP.\n"
+                + "Default crop values are set.");
         }
 
-        function openUserManual() {
-            document.getElementById('userManualModal').style.display = 'flex';
-        }
-
-        function closeUserManual() {
-            document.getElementById('userManualModal').style.display = 'none';
-        }
-
-        function openDeveloperInfo() {
-            document.getElementById('developerModal').style.display = 'flex';
-        }
-
-        function closeDeveloperInfo() {
-            document.getElementById('developerModal').style.display = 'none';
+        function showDeveloperInfo() {
+            alert("Developer: S M Tufayal Ahammad\n\n"
+                + "Portfolio: profile.tufayal.com\n"
+                + "Other Projects: projects.tufayal.com\n"
+                + "Suggest Edits: suggestion.tufayal.com");
         }
     </script>
 </body>
