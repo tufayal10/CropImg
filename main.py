@@ -41,14 +41,14 @@ def crop_images():
                 cropped_img.save(img_io, format=original_format)
 
             img_io.seek(0)
-            zip_file.writestr(f"CbySMTA{os.path.splitext(img_file.filename)[0]}.{ext}", img_io.read())
+            zip_file.writestr(f"SMTA_{idx:03d}.{ext}", img_io.read())
 
     zip_buffer.seek(0)
     return send_file(
         zip_buffer,
         mimetype="application/zip",
         as_attachment=True,
-        download_name="my_images.zip"
+        download_name="Croped Images.zip"
     )
 
 if __name__ == "__main__":
