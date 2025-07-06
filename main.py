@@ -48,7 +48,7 @@ def crop_images():
         zip_buffer,
         mimetype="application/zip",
         as_attachment=True,
-        download_name="Croped Images.zip"
+        download_name="Cropped Images.zip"
     )
 
 if __name__ == "__main__":
