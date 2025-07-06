@@ -1,58 +1,401 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Image Cropping Tool</title>
-  <link rel="stylesheet" href="templates/style.css">
+    <meta charset="UTF-8">
+    <title>Image Cropping Tool</title>
+    <style>
+        
+        /* Your existing styles remain untouched (exactly as you provided) */
+body {
+    background: radial-gradient(circle at top, #0f2027, #203a43, #2c5364);
+    font-family: 'Poppins', sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 30px 20px;
+    min-height: 100vh;
+    color: #fff;
+    text-align: center;
+}
+
+h1 {
+    color: #f5c518;
+    font-size: 28px;
+    margin-bottom: 20px;
+}
+
+form {
+    background-color: #181a1b;
+    padding: 30px 20px;
+    border-radius: 16px;
+    width: 100%;
+    max-width: 460px;
+    box-sizing: border-box;
+    margin-bottom: 20px;
+}
+
+label {
+    display: block;
+    margin-bottom: 8px;
+    color: #f5c518;
+    font-weight: 500;
+    text-align: left;
+}
+
+input[type="file"] {
+    width: 100%;
+    padding: 16px;
+    border: 2px dashed #f5c518;
+    border-radius: 10px;
+    background: #2a2c2d;
+    color: #fff;
+    margin-bottom: 16px;
+    box-sizing: border-box;
+    font-size: 1rem;
+    transition: border-color 0.3s ease;
+}
+input[type="file"]:hover {
+    border-color: #ff7e67;
+}
+
+.input-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 16px;
+}
+
+.input-group {
+    flex: 1 1 48%;
+}
+
+.input-group input[type="number"] {
+    width: 90%;
+    padding: 14px;
+    border: none;
+    border-radius: 8px;
+    background: #2a2c2d;
+    color: #fff;
+    font-size: 1rem;
+}
+
+button {
+    background-color: #ff7e67;
+    color: white;
+    border: none;
+    padding: 14px;
+    border-radius: 8px;
+    font-size: 16px;
+    cursor: pointer;
+    width: 100%;
+    margin-top: 12px;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+button:hover {
+    background-color: #ff9a80;
+    transform: translateY(-2px);
+}
+
+.preview-section {
+    display: none;
+    text-align: center;
+    margin-top: 20px;
+    opacity: 0;
+    transition: opacity 0.8s ease;
+}
+
+.preview-section.show {
+    display: block;
+    opacity: 1;
+}
+
+.preview-section img {
+    width: 100%;
+    max-width: 320px;
+    border-radius: 12px;
+    margin-bottom: 12px;
+}
+
+.button-row {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    width: 100%;
+    flex-wrap: wrap;
+}
+
+.button-row button {
+    width: 160px;
+}
+
+@media (max-width: 480px) {
+    .input-group {
+        flex: 1 1 100%;
+    }
+
+    .button-row button {
+        width: 100%;
+    }
+}
+
+/* Modal */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 999;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+}
+
+.modal.show {
+    display: flex;
+    opacity: 1;
+}
+
+.modal-content {
+    background: #1e1e1e;
+    padding: 20px;
+    border-radius: 12px;
+    text-align: left;
+    max-width: 400px;
+    color: #fff;
+    transform: translateY(-50px);
+    transition: transform 0.4s ease, opacity 0.4s ease;
+    opacity: 0;
+}
+
+.modal.show .modal-content {
+    transform: translateY(0);
+    opacity: 1;
+}
+
+.modal-content h2 {
+    color: #f5c518;
+}
+
+.modal-content button,
+.close-btn {
+    margin-top: 10px;
+    background-color: #34495e;
+    border: none;
+    border-radius: 8px;
+    padding: 10px;
+    width: 100%;
+    color: #fff;
+    cursor: pointer;
+    font-size: 15px;
+    transition: background-color 0.3s ease;
+}
+
+.modal-content button:hover,
+.close-btn:hover {
+    background-color: #2c3e50;
+}
+
+/* Animate preview crop (fade + scale) */
+.animate-preview {
+  animation: fadeInScale 0.5s ease;
+}
+
+@keyframes fadeInScale {
+  from {
+    opacity: 0;
+    transform: scale(0.85);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Animate section transitions */
+.form-section {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+
+.form-section.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.image-counter {
+    margin-top: 8px;
+    font-size: 0.95rem;
+    color: #f5c518;
+    text-align: left;
+}
+
+        
+    </style>
+    
 </head>
 <body>
-  <h1>Image Cropping Tool</h1>
-  <form id="cropForm" method="POST" action="/crop" enctype="multipart/form-data">
-    <label for="imageInput">Upload Images:</label>
-    <input type="file" name="images" id="imageInput" accept="image/*" multiple required>
+    <h1>Image Cropping Tool</h1>
+    <form id="cropForm" method="POST" action="/crop" enctype="multipart/form-data">
+        <!-- Image Upload (Resized & Styled) -->
+        <label for="imageInput">Upload Images:</label>
+<input type="file" name="images" id="imageInput" accept="image/*" multiple required>
 
-    <div class="input-row">
-      <input type="number" name="x" id="x" placeholder="X Coordinate" value="0" required>
-      <input type="number" name="y" id="y" placeholder="Y Coordinate" value="0" required>
-      <input type="number" name="width" id="width" placeholder="Crop Width" value="200" required>
-      <input type="number" name="height" id="height" placeholder="Crop Height" value="200" required>
+<p id="imageCount" class="image-counter"></p>
+
+        <!-- Crop Settings with Labels -->
+        <div class="input-row">
+            <div class="input-group">
+                <label for="x">X Coordinate:</label>
+                <input type="number" name="x" id="x" placeholder="X" value="320" required>
+            </div>
+            <div class="input-group">
+                <label for="y">Y Coordinate:</label>
+                <input type="number" name="y" id="y" placeholder="Y" value="0" required>
+            </div>
+            <div class="input-group">
+                <label for="width">Crop Width:</label>
+                <input type="number" name="width" id="width" placeholder="Width" value="640" required>
+            </div>
+            <div class="input-group">
+                <label for="height">Crop Height:</label>
+                <input type="number" name="height" id="height" placeholder="Height" value="752" required>
+            </div>
+        </div>
+
+        <button type="button" onclick="showPreview()">Preview Crop</button>
+
+        <div class="preview-section" id="previewSection">
+            <h2>Preview (First Image)</h2>
+            <img id="croppedPreview" alt="Preview">
+            <button type="submit">Crop & Download ZIP</button>
+        </div>
+    </form>
+
+    <!-- Buttons for Manual and Developer Info -->
+    <div class="button-row">
+        <button onclick="openUserManual()">User Manual</button>
+        <button onclick="openDeveloperInfo()">Developer Info</button>
     </div>
 
-    <button type="button" onclick="showPreview()">Preview Crop</button>
-
-    <div class="preview-section" id="previewSection">
-      <h2>Preview (First Image)</h2>
-      <img id="croppedPreview" alt="Preview">
-      <p id="imageCounter"></p>
+    <!-- User Manual Modal -->
+    <div class="modal" id="userManualModal">
+        <div class="modal-content">
+            <h2>User Manual</h2>
+            <p><strong>1. Upload Images:</strong> Select up to 100 images.</p>
+            <p><strong>2. Set Crop Area:</strong> Adjust X, Y, Width, Height as needed.</p>
+            <p><strong>3. Preview:</strong> Click Preview Crop to see the result.</p>
+            <p><strong>4. Crop & Download:</strong> Click Crop & Download ZIP to get your cropped images.</p>
+            <button class="close-btn" onclick="closeUserManual()">Close</button>
+        </div>
     </div>
-  </form>
 
-  <div class="button-row">
-    <button onclick="openUserManual()">User Manual</button>
-    <button onclick="openDeveloperInfo()">Developer Info</button>
-  </div>
-
-  <!-- User Manual Modal -->
-  <div class="modal" id="userManualModal">
-    <div class="modal-content">
-      <h2>User Manual</h2>
-      <p><strong>1. Upload Images:</strong> Select up to 100 images.</p>
-      <p><strong>2. Set Crop Area:</strong> Adjust X, Y, Width, Height as needed.</p>
-      <p><strong>3. Preview:</strong> Click Preview Crop to see the result.</p>
-      <button class="close-btn" onclick="closeUserManual()">Close</button>
+    <!-- Developer Info Modal -->
+    <div class="modal" id="developerModal">
+        <div class="modal-content">
+            <h2>Developer Info</h2>
+            <center><p><strong>S M Tufayal Ahammad</strong></p></center>
+            <button onclick="window.open('https://profile.tufayal.com', '_blank')">Portfolio</button>
+            <button onclick="window.open('https://projects.tufayal.com', '_blank')">Other Projects</button>
+            <button onclick="window.open('https://suggestion.tufayal.com', '_blank')">Suggest Edit</button>
+            <button class="close-btn" onclick="closeDeveloperInfo()">Close</button>
+        </div>
     </div>
-  </div>
 
-  <!-- Developer Info Modal -->
-  <div class="modal" id="developerModal">
-    <div class="modal-content">
-      <h2>Developer Info</h2>
-      <p><strong>S M Tufayal Ahammad</strong></p>
-      <button onclick="window.open('https://profile.tufayal.com', '_blank')">Portfolio</button>
-      <button class="close-btn" onclick="closeDeveloperInfo()">Close</button>
-    </div>
-  </div>
+    <script>
+        
+        function showPreview() {
+  const fileInput = document.getElementById('imageInput');
+  const x = parseInt(document.getElementById('x').value);
+  const y = parseInt(document.getElementById('y').value);
+  const width = parseInt(document.getElementById('width').value);
+  const height = parseInt(document.getElementById('height').value);
+  
+  if (fileInput.files.length === 0) {
+    alert("Please select at least one image.");
+    return;
+  }
+  
+  if (fileInput.files.length > 100) {
+    alert("You can only upload up to 100 images at once.");
+    return;
+  }
+  
+  const file = fileInput.files[0]; // Still previewing first image only
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    const img = new Image();
+    img.onload = function() {
+      const safeX = Math.max(0, Math.min(x, img.width - 1));
+      const safeY = Math.max(0, Math.min(y, img.height - 1));
+      const safeWidth = Math.max(1, Math.min(width, img.width - safeX));
+      const safeHeight = Math.max(1, Math.min(height, img.height - safeY));
+      
+      if (safeWidth <= 0 || safeHeight <= 0) {
+        alert("Please check the numbers you have inputted.");
+        return;
+      }
+      
+      const canvas = document.createElement('canvas');
+      canvas.width = safeWidth;
+      canvas.height = safeHeight;
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(img, safeX, safeY, safeWidth, safeHeight, 0, 0, safeWidth, safeHeight);
+      
+      const preview = document.getElementById('croppedPreview');
+      preview.src = canvas.toDataURL('image/png');
+      
+      preview.classList.remove('animate-preview');
+      void preview.offsetWidth;
+      preview.classList.add('animate-preview');
+      
+      const previewSection = document.getElementById('previewSection');
+      previewSection.classList.add('show');
+      previewSection.style.display = 'block';
+    };
+    img.onerror = function() {
+      alert("Failed to load image. Please try again.");
+    };
+    img.src = e.target.result;
+  };
+  reader.onerror = function() {
+    alert("Failed to read the file. Please try again.");
+  };
+  reader.readAsDataURL(file);
+}
 
-  <script src="templates/main.js"></script>
+
+function openUserManual() {
+  const modal = document.getElementById('userManualModal');
+  modal.style.display = 'flex';
+  setTimeout(() => modal.classList.add('show'), 10);
+}
+
+function closeUserManual() {
+  const modal = document.getElementById('userManualModal');
+  modal.classList.remove('show');
+  setTimeout(() => modal.style.display = 'none', 300);
+}
+
+function openDeveloperInfo() {
+  const modal = document.getElementById('developerModal');
+  modal.style.display = 'flex';
+  setTimeout(() => modal.classList.add('show'), 10);
+}
+
+function closeDeveloperInfo() {
+  const modal = document.getElementById('developerModal');
+  modal.classList.remove('show');
+  setTimeout(() => modal.style.display = 'none', 300);
+}
+
+        
+    </script>
 </body>
 </html>
