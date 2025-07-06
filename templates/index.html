@@ -1,254 +1,58 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Image Cropping Tool</title>
-    <style>
-        body {
-            background: radial-gradient(circle at top, #0f2027, #203a43, #2c5364);
-            font-family: 'Poppins', sans-serif;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 30px 20px;
-            color: #fff;
-        }
-
-        h1 {
-            color: #f5c518;
-            font-size: 28px;
-            margin-bottom: 20px;
-        }
-
-        form {
-            background-color: #181a1b;
-            padding: 30px 20px;
-            border-radius: 16px;
-            width: 100%;
-            max-width: 480px;
-            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
-        }
-
-        input[type="file"] {
-            width: 100%;
-            padding: 12px;
-            border: none;
-            border-radius: 8px;
-            background: #2a2c2d;
-            color: #fff;
-            margin-bottom: 16px;
-        }
-
-        .input-row {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-            margin-bottom: 16px;
-        }
-
-        .input-row input[type="number"] {
-            flex: 1;
-            min-width: 60px;
-            padding: 10px;
-            border: none;
-            border-radius: 8px;
-            background: #2a2c2d;
-            color: #fff;
-            font-size: 14px;
-        }
-
-        button {
-            background-color: #ff7e67;
-            color: white;
-            border: none;
-            padding: 12px;
-            border-radius: 8px;
-            font-size: 16px;
-            cursor: pointer;
-            width: 100%;
-            margin-top: 10px;
-        }
-
-        button:hover {
-            background-color: #ff9a80;
-        }
-
-        .preview-section {
-            display: none;
-            text-align: center;
-            margin-top: 20px;
-        }
-
-        .preview-section img {
-            width: 100%;
-            max-width: 300px;
-            border-radius: 12px;
-            margin-bottom: 10px;
-        }
-
-        .button-row {
-            display: flex;
-            gap: 10px;
-            margin-top: 15px;
-            width: 100%;
-        }
-
-        /* Modal Style */
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 999;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.8);
-            justify-content: center;
-            align-items: center;
-        }
-
-        .modal-content {
-            background: #1e1e1e;
-            padding: 20px;
-            border-radius: 12px;
-            text-align: left;
-            max-width: 400px;
-            color: #fff;
-        }
-
-        .modal-content h2 {
-            margin-top: 0;
-            color: #f5c518;
-        }
-
-        .close-btn {
-            background-color: #ff7e67;
-            padding: 8px 12px;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            margin-top: 15px;
-        }
-
-        .close-btn:hover {
-            background-color: #ff9a80;
-        }
-
-        .modal-content button {
-            margin-top: 10px;
-            background-color: #34495e;
-            border: none;
-            border-radius: 8px;
-            padding: 10px;
-            width: 100%;
-            color: #fff;
-            cursor: pointer;
-            font-size: 15px;
-        }
-
-        .modal-content button:hover {
-            background-color: #2c3e50;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <title>Image Cropping Tool</title>
+  <link rel="stylesheet" href="templates/style.css">
 </head>
 <body>
-    <h1>Image Cropping Tool</h1>
-    <form id="cropForm" method="POST" action="/crop" enctype="multipart/form-data">
-        <input type="file" name="images" id="imageInput" accept="image/*" multiple required>
-        <div class="input-row">
-            <input type="number" name="x" id="x" placeholder="X" value="320" required>
-            <input type="number" name="y" id="y" placeholder="Y" value="0" required>
-            <input type="number" name="width" id="width" placeholder="Width" value="640" required>
-            <input type="number" name="height" id="height" placeholder="Height" value="752" required>
-        </div>
-        <button type="button" onclick="showPreview()">Preview Crop</button>
+  <h1>Image Cropping Tool</h1>
+  <form id="cropForm" method="POST" action="/crop" enctype="multipart/form-data">
+    <label for="imageInput">Upload Images:</label>
+    <input type="file" name="images" id="imageInput" accept="image/*" multiple required>
 
-        <div class="preview-section" id="previewSection">
-            <h2>Preview (First Image)</h2>
-            <img id="croppedPreview" alt="Preview">
-            <button type="submit">Crop & Download ZIP</button>
-        </div>
-    </form>
-
-    <div class="button-row">
-        <button onclick="openUserManual()">User Manual</button>
-        <button onclick="openDeveloperInfo()">Developer Info</button>
+    <div class="input-row">
+      <input type="number" name="x" id="x" placeholder="X Coordinate" value="0" required>
+      <input type="number" name="y" id="y" placeholder="Y Coordinate" value="0" required>
+      <input type="number" name="width" id="width" placeholder="Crop Width" value="200" required>
+      <input type="number" name="height" id="height" placeholder="Crop Height" value="200" required>
     </div>
 
-    <!-- User Manual Modal -->
-    <div class="modal" id="userManualModal">
-        <div class="modal-content">
-            <h2>User Manual</h2>
-            <p><strong>1. Upload Images:</strong> Select up to 100 images.</p>
-            <p><strong>2. Set Crop Area:</strong> Adjust X, Y, Width, Height as needed.</p>
-            <p><strong>3. Preview:</strong> Click Preview Crop to see the result.</p>
-            <p><strong>4. Crop & Download:</strong> Click Crop & Download ZIP to get your cropped images.</p>
-            <button class="close-btn" onclick="closeUserManual()">Close</button>
-        </div>
+    <button type="button" onclick="showPreview()">Preview Crop</button>
+
+    <div class="preview-section" id="previewSection">
+      <h2>Preview (First Image)</h2>
+      <img id="croppedPreview" alt="Preview">
+      <p id="imageCounter"></p>
     </div>
+  </form>
 
-    <!-- Developer Info Modal -->
-    <div class="modal" id="developerModal">
-        <div class="modal-content">
-            <h2>Developer Info</h2>
-            <center></center><p><strong>S M Tufayal Ahammad</strong></p></center>
-            <button onclick="window.open('https://profile.tufayal.com', '_blank')">Portfolio</button>
-            <button onclick="window.open('https://projects.tufayal.com', '_blank')">Other Projects</button>
-            <button onclick="window.open('https://suggestion.tufayal.com', '_blank')">Suggest Edit</button>
-            <button class="close-btn" onclick="closeDeveloperInfo()">Close</button>
-        </div>
+  <div class="button-row">
+    <button onclick="openUserManual()">User Manual</button>
+    <button onclick="openDeveloperInfo()">Developer Info</button>
+  </div>
+
+  <!-- User Manual Modal -->
+  <div class="modal" id="userManualModal">
+    <div class="modal-content">
+      <h2>User Manual</h2>
+      <p><strong>1. Upload Images:</strong> Select up to 100 images.</p>
+      <p><strong>2. Set Crop Area:</strong> Adjust X, Y, Width, Height as needed.</p>
+      <p><strong>3. Preview:</strong> Click Preview Crop to see the result.</p>
+      <button class="close-btn" onclick="closeUserManual()">Close</button>
     </div>
+  </div>
 
-    <script>
-        function showPreview() {
-            const fileInput = document.getElementById('imageInput');
-            const x = parseInt(document.getElementById('x').value);
-            const y = parseInt(document.getElementById('y').value);
-            const width = parseInt(document.getElementById('width').value);
-            const height = parseInt(document.getElementById('height').value);
+  <!-- Developer Info Modal -->
+  <div class="modal" id="developerModal">
+    <div class="modal-content">
+      <h2>Developer Info</h2>
+      <p><strong>S M Tufayal Ahammad</strong></p>
+      <button onclick="window.open('https://profile.tufayal.com', '_blank')">Portfolio</button>
+      <button class="close-btn" onclick="closeDeveloperInfo()">Close</button>
+    </div>
+  </div>
 
-            if (fileInput.files.length === 0) {
-                alert("Please select at least one image.");
-                return;
-            }
-
-            if (fileInput.files.length > 100) {
-                alert("You can only upload up to 100 images at once.");
-                return;
-            }
-
-            const reader = new FileReader();
-            reader.onload = function (e) {
-                const img = new Image();
-                img.onload = function () {
-                    const canvas = document.createElement('canvas');
-                    canvas.width = width;
-                    canvas.height = height;
-                    const ctx = canvas.getContext('2d');
-                    ctx.drawImage(img, x, y, width, height, 0, 0, width, height);
-                    document.getElementById('croppedPreview').src = canvas.toDataURL('image/png');
-                    document.getElementById('previewSection').style.display = 'block';
-                };
-                img.src = e.target.result;
-            };
-            reader.readAsDataURL(fileInput.files[0]);
-        }
-
-        function openUserManual() {
-            document.getElementById('userManualModal').style.display = 'flex';
-        }
-
-        function closeUserManual() {
-            document.getElementById('userManualModal').style.display = 'none';
-        }
-
-        function openDeveloperInfo() {
-            document.getElementById('developerModal').style.display = 'flex';
-        }
-
-        function closeDeveloperInfo() {
-            document.getElementById('developerModal').style.display = 'none';
-        }
-    </script>
+  <script src="templates/main.js"></script>
 </body>
 </html>
