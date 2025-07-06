@@ -2,6 +2,9 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
     <title>Image Cropping Tool</title>
     <style>
         
@@ -240,7 +243,12 @@ button:hover {
     </style>
     
 </head>
-<body>
+
+<body style="margin:0; min-height:100vh; display:flex; flex-direction:column; padding: 0;">
+    
+  
+<div style="flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; max-width: 600px; width: 85%; padding: 20px">
+    
     <h1>Image Cropping Tool</h1>
     <form id="cropForm" method="POST" action="/crop" enctype="multipart/form-data">
         <!-- Image Upload (Resized & Styled) -->
@@ -277,11 +285,10 @@ button:hover {
             <button type="submit">Crop & Download ZIP</button>
         </div>
     </form>
-
     <!-- Buttons for Manual and Developer Info -->
     <div class="button-row">
         <button onclick="openUserManual()">User Manual</button>
-        <button onclick="openDeveloperInfo()">Developer Info</button>
+        <button onclick="openDeveloperInfo()">Details</button>
     </div>
 
     <!-- User Manual Modal -->
@@ -299,7 +306,7 @@ button:hover {
     <!-- Developer Info Modal -->
     <div class="modal" id="developerModal">
         <div class="modal-content">
-            <h2>Developer Info</h2>
+            <h2>Details</h2>
             <center><p><strong>S M Tufayal Ahammad</strong></p></center>
             <button onclick="window.open('https://profile.tufayal.com', '_blank')">Portfolio</button>
             <button onclick="window.open('https://projects.tufayal.com', '_blank')">Other Projects</button>
@@ -307,6 +314,17 @@ button:hover {
             <button class="close-btn" onclick="closeDeveloperInfo()">Close</button>
         </div>
     </div>
+</div>
+
+    <!-- ✅ Sticky Footer (after content) -->
+  <footer style="width: 100%;">
+    <div style="width: 100%; background-color: #c4b7b8; padding: 20px 10px; text-align: center;">
+        <p style=" color: #006666; font-size: 14px;">
+            &copy; 2025 S M Tufayal Ahammad. <br> All rights reserved. Any unauthorized use or reproduction of this website’s content is strictly prohibited.
+        </p>
+    </div>
+</footer>
+
 
     <script>
         
