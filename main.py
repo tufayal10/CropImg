@@ -23,7 +23,7 @@ def crop_images():
     zip_buffer = io.BytesIO()
 
     with zipfile.ZipFile(zip_buffer, "w") as zip_file:
-        for img_file in images:
+        for idx, img_file in enumerate(images, start=1):
             img = Image.open(img_file)
             cropped_img = img.crop((x, y, x + width, y + height))
 
